@@ -1,39 +1,39 @@
-import React, { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import iconGoogle from '../assets/logodegoogle.svg';
-import SummaryApi from '../common'; // Importa la configuración de la API
-import Context from '../context';
-import { toast } from 'sonner';
+import { useContext, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { FaLock, FaEnvelope, FaUserCircle } from "react-icons/fa"
+import SummaryApi from "../common"
+import Context from "../context"
+import { toast } from "sonner"
+import iconGoogle from "../assets/logodegoogle.svg"
 
 const Login = () => {
-  const navigate = useNavigate(); // Usamos navigate para redirigir al usuario
-  const { fetchUserDetails } = useContext(Context);
+  const navigate = useNavigate()
+  const { fetchUserDetails, fetchAccountAddToCartProduct } = useContext(Context)
 
   const [data, setData] = useState({
     email: "",
     password: "",
     rememberMe: false,
-  });
+  })
 
-  // Manejador de cambios para los inputs
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleOnChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target
     setData((prevData) => ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+    }))
+  }
 
-  // Manejador del submit del formulario
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Formulario de login enviado");
+    e.preventDefault()
+    setIsLoading(true)
 
-    // Enviamos los datos del login al servidor
     try {
-      const dataResponse = await fetch(SummaryApi.login.url, { // Usamos la URL de login configurada en SummaryApi
+      const dataResponse = await fetch(SummaryApi.login.url, {
         method: SummaryApi.login.method,
-        credentials: 'include',
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -42,108 +42,165 @@ const Login = () => {
           password: data.password,
           rememberMe: data.rememberMe,
         }),
-      });
+      })
 
-      const responseData = await dataResponse.json();
+      const responseData = await dataResponse.json()
 
       if (responseData.success) {
         toast.success(responseData.message)
-        // Si la respuesta es exitosa, almacenamos el token y redirigimos al usuario
-        localStorage.setItem('authToken', responseData.token); // Almacenar el token JWT en el localStorage
-        navigate("/"); // Redirigir a la página de dashboard o alguna página protegida
-        fetchUserDetails();
+        localStorage.setItem("authToken", responseData.token)
+        navigate("/")
+        fetchUserDetails()
+        fetchAccountAddToCartProduct()
       } else {
         toast.warning(responseData.message)
-        // Aquí puedes mostrar un mensaje de error si la autenticación falla
       }
     } catch (error) {
-      console.error("Error en la solicitud de login:", error);
-      alert('Hubo un error al intentar iniciar sesión. Por favor, inténtalo de nuevo.');
+      console.error("Login request error:", error)
+      toast.error("There was an error trying to log in. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="flex flex-col">
-      <div className="relative flex flex-col m-3 space-y-4 bg-white shadow-xl rounded-2xl md:flex-row md:space-y-0 w-full max-w-md p-6 mx-auto flex-1">
-        <div className="flex flex-col justify-center w-full">
-          <span className="mb-2 text-3xl font-bold text-center md:text-left">Bienvenido de vuelta</span>
-          <span className="font-light text-gray-400 mb-4 text-center md:text-left">
-            Inicia sesión para continuar
-          </span>
-
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              <div>
-                <span className="mb-1 text-sm">Email</span>
-                <input
-                  type="text"
-                  name="email"
-                  placeholder="Ingrese su email"
-                  className="w-full p-2 text-sm border border-gray-300 rounded-md placeholder:text-xs placeholder:font-light placeholder:text-gray-500"
-                  value={data.email}
-                  onChange={handleOnChange}
-                />
-              </div>
-
-              <div>
-                <span className="mb-1 text-sm">Contraseña</span>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Ingrese su contraseña"
-                  className="w-full p-2 text-sm border border-gray-300 rounded-md placeholder:text-xs placeholder:font-light placeholder:text-gray-500"
-                  value={data.password}
-                  onChange={handleOnChange}
-                />
-              </div>
-
-              <div className="flex justify-between items-center py-4">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="rememberMe"
-                    className="mr-2"
-                    checked={data.rememberMe}
-                    onChange={handleOnChange}
-                  />
-                  <label htmlFor="rememberMe" className="text-sm cursor-pointer">
-                    Recordar cuenta
-                  </label>
-                </div>
-                <span className="font-bold hover:underline text-sm">
-                  <Link to="/forgot-password">Contraseña olvidada</Link>
-                </span>
-              </div>
-
-              <button 
-                type="submit"
-                className="w-full px-8 py-3 bg-[#ffcc00] text-[#333] rounded-xl text-lg font-semibold rounded-lg mb-4 hover:bg-yellow-500 hover:text-black hover:border-gray-300 transition-all duration-200"
-              >
-                Iniciar sesión
-              </button>
-
-              <button 
-                className="w-full border border-gray-300 text-[#333] rounded-xl text-lg font-semibold p-2 rounded-lg mb-4 hover:bg-black hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-              >
-                <img src={iconGoogle} alt="Google" className="w-6 h-6 inline mr-2" />
-                Iniciar sesión con Google
-              </button>
-
-              <div className="text-center text-gray-400">
-                ¿No tienes una cuenta?
-                <span className="font-bold text-black ml-2 hover:underline">
-                  <Link to="/sign-up">Regístrate</Link>
-                </span>
+    <div className="bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-5xl w-full flex flex-col md:flex-row">
+        {/* Left Column - Image/Branding */}
+        <div className="md:w-1/2 bg-zinc-800 p-12 hidden md:flex flex-col justify-between">
+          <div>
+            <h2 className="text-white text-3xl font-bold mb-6">Welcome Back!</h2>
+            <p className="text-blue-100 mb-8">
+              Log in to access your account and continue your shopping experience with us.
+            </p>
+            <div className="bg-white/20 p-6 rounded-lg backdrop-blur-sm">
+              <p className="text-white italic">
+                "Shopping with this platform has been a game-changer. The user experience is seamless and the products
+                are top-notch!"
+              </p>
+              <div className="mt-4 flex items-center">
+                <FaUserCircle className="text-white text-xl mr-2" />
+                <p className="text-white font-medium">Sarah Johnson</p>
               </div>
             </div>
+          </div>
+          <div className="mt-auto">
+            <p className="text-blue-100 text-sm">© 2024 Exhibition website created by Sky.</p>
+          </div>
+        </div>
+
+        {/* Right Column - Login Form */}
+        <div className="md:w-1/2 p-8 md:p-12">
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-gray-800">Sign In</h3>
+            <p className="text-gray-500 mt-2">Please sign in to continue</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaEnvelope className="text-gray-400" />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  value={data.email}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaLock className="text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  value={data.password}
+                  onChange={handleOnChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="rememberMe"
+                  type="checkbox"
+                  name="rememberMe"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  checked={data.rememberMe}
+                  onChange={handleOnChange}
+                />
+                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
+                  Remember me
+                </label>
+              </div>
+              <Link to="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                Forgot password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-zinc-800 hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                isLoading ? "opacity-75 cursor-not-allowed" : ""
+              }`}
+              disabled={isLoading}
+            >
+              {isLoading ? "Signing in..." : "Sign In"}
+            </button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <img src={iconGoogle || "/placeholder.svg"} alt="Google" className="w-5 h-5 mr-2" />
+              Sign in with Google
+            </button>
+
+            <p className="mt-6 text-center text-sm text-gray-500">
+              Don't have an account?{" "}
+              <Link to="/sign-up" className="font-medium text-zinc-800 hover:text-zinc-700">
+                Sign up
+              </Link>
+            </p>
           </form>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
+
+
 
 
 

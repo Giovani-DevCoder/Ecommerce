@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react'
-import SummaryApi from '../common'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react';
+import SummaryApi from '../common';
+import { Link } from 'react-router-dom';
 
 const ProductList = () => {
   const scrollRef = useRef(null);
@@ -27,20 +27,31 @@ const ProductList = () => {
     return () => window.removeEventListener('resize', checkOverflow);
   }, []);
 
-    const [categoryProduct,setCategoryProduct] = useState([])
-    const [loading,setLoading] = useState(false)
+  const [categoryProduct, setCategoryProduct] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const fetchCategoryProduct = async() => {
-        setLoading(true)
-        const response = await fetch(SummaryApi.productCategory.url)
-        const dataResponse = await response.json()
-        setLoading(false)
-        setCategoryProduct(dataResponse.data)
+  const fetchCategoryProduct = async () => {
+    setLoading(true);
+    setError(null); // Reinicia el estado de error
+    try {
+      const response = await fetch(SummaryApi.productCategory.url);
+      if (!response.ok) {
+        throw new Error('Error al obtener los datos');
+      }
+      const dataResponse = await response.json();
+      setCategoryProduct(dataResponse.data || []); // Asegúrate de que sea un arreglo
+    } catch (error) {
+      setError(error.message); // Maneja el error
+      setCategoryProduct([]); // Asegúrate de que categoryProduct sea un arreglo vacío
+    } finally {
+      setLoading(false);
     }
+  };
 
-    useEffect(()=>{
-        fetchCategoryProduct()
-    },[])
+  useEffect(() => {
+    fetchCategoryProduct();
+  }, []);
 
   return (
     <div className="relative">
@@ -54,19 +65,23 @@ const ProductList = () => {
       )}
       <div
         ref={scrollRef}
-        className="flex items-center justify-between bg-white h-16 overflow-scroll scrollbar-none"
+        className="flex items-center justify-between bg-[#F6F6F6] h-16 overflow-scroll scrollbar-none"
       >
-        {categoryProduct.map((product, index) => (
-          <Link
-            key={index}
-            to={`/product-category/${product?.category}`}
-            className="cursor-pointer mx-9 hover:underline"
-          >
-            <p className="text-sm text-gray-600 font-semibold capitalize">
-              {product?.category}
-            </p>
-          </Link>
-        ))}
+        {loading ? (
+          <p>Cargando...</p> // Muestra un mensaje de carga
+        ) : error ? (
+          <p>Error: {error}</p> // Muestra un mensaje de error
+        ) : (
+          categoryProduct.map((product, index) => (
+            <Link
+            to={"/product-category?category="+product?.category} className='cursor-pointer' key={product?.category}
+            >
+              <p className="text-sm text-gray-600 font-semibold capitalize m-6">
+                {product?.category}
+              </p>
+            </Link>
+          ))
+        )}
       </div>
       {showButtons && (
         <button
@@ -77,7 +92,7 @@ const ProductList = () => {
         </button>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ProductList
+export default ProductList;

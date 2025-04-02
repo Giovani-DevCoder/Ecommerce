@@ -16,15 +16,15 @@ const getProductCategory = async(req,res) =>{
         }
         res.status(200).json({
         message : "category product",
-        data: productByCategory,
-        success: true,
-        error: false
+        data    : productByCategory,
+        success : true,
+        error   : false
         })
     }catch(err){
         res.status(400).json({
-            message: err.message || err,
-            error: true,
-            success: false
+            message : err.message || err,
+            error   : true,
+            success : false
             })
     }
 }

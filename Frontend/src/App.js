@@ -2,7 +2,7 @@ import './App.css';
 import { Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { Toaster } from 'sonner'
 import SummaryApi from './common';
 import Context from './context';
@@ -12,8 +12,8 @@ import Top from './pages/Top';
 
 function App() {
   const dispatch = useDispatch();
-
-  // Memoriza la función fetchUserDetails para evitar recrearla en cada renderizado
+  const [accountCartProduct,setaccountCartProduct] = useState(0);
+ 
   const fetchUserDetails = useCallback(async () => {
     const dataResponse = await fetch(SummaryApi.current_user.url, {
       method: SummaryApi.current_user.method,
@@ -27,24 +27,40 @@ function App() {
     }
 
     console.log("data-user", dataResponse);
-  }, [dispatch]); // 'dispatch' como dependencia, ya que se usa dentro de la función
+  }, [dispatch]);
 
-  // Ejecuta fetchUserDetails al montar el componente
+  const fetchAccountAddToCartProduct = async() => {
+    const dataResponse = await fetch(SummaryApi.accountAddToCartProduct.url,{
+      method: SummaryApi.accountAddToCartProduct.method,
+      credentials: "include",
+    });
+
+    const dataApi = await dataResponse.json();
+
+    console.log("dataApi",dataApi)
+    setaccountCartProduct(dataApi?.data?.count)
+  }
+
   useEffect(() => {
+    //** user details */
     fetchUserDetails();
-  }, [fetchUserDetails]); // Ahora incluye fetchUserDetails como dependencia
+    //** user details cart product */
+    fetchAccountAddToCartProduct();
+  }, []);
 
   return (
     <>
       <Context.Provider
         value={{
-          fetchUserDetails, // Proporciona la función en el contexto
+          fetchUserDetails,
+          accountCartProduct,
+          fetchAccountAddToCartProduct
         }}
       >
       <Top/>
       <Header />
-        <Toaster richColors position="top-right" />
-        <main className="min-h-[calc(100vh-100px)]">
+        <Toaster richColors position="top-center" />
+        <main className="bg-[#E7E7E7] min-h-[calc(100vh-100px)]">
           <Outlet />
         </main>
         <Footer />

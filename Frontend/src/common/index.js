@@ -4,44 +4,80 @@ const backendDomin = 'http://localhost:8080';
 // Configuración de las rutas de las API's
 const SummaryApi = {
   signUP : {
-    url : `${backendDomin}/api/signup`,
-    method: 'post'
+    url     : `${backendDomin}/api/signup`,
+    method  : 'post'
   },
   login : {
-    url : `${backendDomin}/api/login`,
+    url     : `${backendDomin}/api/login`,
     method  : 'post'
   },
   current_user : {
-    url: `${backendDomin}/api/user-details`,
+    url     : `${backendDomin}/api/user-details`,
     method  : 'get'
   },
   logout_user : {
-    url : `${backendDomin}/api/userLogout`,
+    url    : `${backendDomin}/api/userLogout`,
     method : 'get'
   },
   allUser : {
-    url : `${backendDomin}/api/all-users`,
+    url    : `${backendDomin}/api/all-users`,
     method : 'get'
   },
   uploadProduct : {
-    url : `${backendDomin}/api/upload-product`,
+    url    : `${backendDomin}/api/upload-product`,
     method : 'post'
   },
   updateUser : {
-    url : `${backendDomin}/api/update-user`,
+    url    : `${backendDomin}/api/update-user`,
     method : 'post'
   },
   allProduct: {
-    url : `${backendDomin}/api/get-product`,
+    url    : `${backendDomin}/api/get-product`,
     method : 'get'
   },
   updateProduct: {
-    url : `${backendDomin}/api/update-product`,
+    url    : `${backendDomin}/api/update-product`,
     method : 'post'
   },
-  productCategory: {
-    url : `${backendDomin}/api/get-productCategory`,
+  productCategory : {
+    url    : `${backendDomin}/api/get-productCategory`,
     method : 'get'
+  },
+  categorySmartProduct  : {
+    url    : `${backendDomin}/api/category-product`,
+    method : 'post'
+  },
+  addToCartProduct  : {
+    url    : `${backendDomin}/api/addToCartProduct`,
+    method : 'post'
+  },
+  productDetails : {
+    url    : `${backendDomin}/api/product-details`,
+    method : 'post'
+  },
+  accountAddToCartProduct : {
+  url      : `${backendDomin}/api/accountAddToCartProduct`,
+  method   : 'get'
+  },
+  addToCartView : {
+    url    : `${backendDomin}/api/add-to-cart-view`,
+    method : 'get'
+  },
+  updateCartProduct : {
+    url    : `${backendDomin}/api/update-cart`,
+    method : 'post'
+  },
+  deleteCartProduct : {
+    url    : `${backendDomin}/api/delete-cart`,
+    method : 'post'
+  },
+  searchProduct :  {
+    url    : `${backendDomin}/api/search`,
+    method : 'get'
+  },
+  filterProduct : {
+    url    : `${backendDomin}/api/filter-product`,
+    method : 'post'
   }
 };
 

@@ -1,0 +1,21 @@
+module.exports = {
+    userSignUpController: require('./user/userSignUp'),
+    userLoginController: require('./user/userSignIn'),
+    userDetailsController: require('./user/userDetails'),
+    userLogout: require('./user/userLogout'),
+    allUsers: require('./user/allUsers'),
+    updateUser: require('./user/updateUser'),
+    uploadProductController: require('./product/uploadProduct'),
+    getProductController: require('./product/getProduct'),
+    updateProductController: require('./product/updateProduct'),
+    getProductCategory: require('./product/getProductCategory'),
+    getSmartProductCategory: require('./product/getSmartProductCategory'),
+    addToCartController: require('../controller/user/addToCartController'),
+    getProductDetails: require('./product/getProductDetails'),
+    accountAddToCartProduct: require('./user/accountAddToCartProduct'),
+    addToCartView: require('./user/addToCartView'),
+    updateAddToCartProduct: require('./user/updateAddToCartProduct'),
+    deleteAddToCartProduct: require('./user/deleteAddToCartProduct'),
+    searchProduct: require('./product/searchProduct'),
+    filterProductController: require('./product/filterProduct')
+  };

@@ -14,14 +14,14 @@ async function uploadProductController(req,res){
 
         res.status(201).json({
             message : "Product upload successfully",
-            error : false,
+            error   : false,
             success : true,
-            data : saveProduct
+            data    : saveProduct
         })
         }catch (err) {
         res.status(400).json({
           message : err.message || err,
-          error : true,
+          error   : true,
           success : false
         });
       }

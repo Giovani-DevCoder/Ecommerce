@@ -82,6 +82,7 @@ module.exports = {
     },
   },
   plugins: [
+    require('tailwind-scrollbar-hide'),
     require("tailwindcss-animate"),
     function ({ addComponents }) {
       addComponents({

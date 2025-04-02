@@ -12,14 +12,14 @@ async function updateProductController(req,res){
 
         res.json( {
             message : "Product update successfully",
-            data : updateProduct,
+            data    : updateProduct,
             success : true,
-            error : false
+            error   : false
         })
     }catch(err){
         res.status(400).json({
             message : err.message || err,
-            error : true,
+            error   : true,
             success : false
         })
     }

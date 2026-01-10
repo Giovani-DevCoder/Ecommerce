@@ -3,3 +3,5 @@ Proyecto Fullstack, creacion de un E-commerce funcional, con interfaz, servidor 
 Stack MERN
 
 Base de datos con protocolos de seguridad JWT.
+
+Avance en detalles finales del proyecto.
